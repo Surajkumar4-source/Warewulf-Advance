@@ -1,4 +1,4 @@
-# **Warewulf: Theory and Detailed Implementation on Ubuntu VMs**
+# **Warewulf: Theory and Detailed Guide on Ubuntu VMs**
 
 ## **1. Introduction to Warewulf**
 Warewulf is an open-source, scalable, and lightweight **cluster provisioning and management system**. It is designed to manage High-Performance Computing (HPC) clusters by providing a **stateless and diskless booting mechanism**. This eliminates the need for local disks on compute nodes, improving reliability and simplifying maintenance.
