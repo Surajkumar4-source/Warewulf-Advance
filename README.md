@@ -37,13 +37,13 @@ We will set up Warewulf on Ubuntu 22.04 with:
 
 ## **Step 1: Install Warewulf on the Master Node**
 ### **1.1 Update and Install Dependencies**
-```bash
+```yml
 sudo apt update && sudo apt upgrade -y
 sudo apt install curl wget git build-essential -y
 ```
 
 ### **1.2 Install Warewulf**
-```bash
+```yml
 git clone https://github.com/warewulf/warewulf.git
 cd warewulf
 make
@@ -51,14 +51,14 @@ sudo make install
 ```
 
 ### **1.3 Enable and Start Warewulf Services**
-```bash
+```yml
 sudo systemctl enable warewulfd
 sudo systemctl start warewulfd
 ```
 
 ### **1.4 Verify Installation**
 Check the Warewulf daemon status:
-```bash
+```yml
 sudo systemctl status warewulfd
 ```
 
@@ -67,15 +67,18 @@ sudo systemctl status warewulfd
 ## **Step 2: Configure the Master Node**
 ### **2.1 Configure the Network**
 Find the primary network interface:
-```bash
+
+```yml
 ip a
 ```
 Edit the Warewulf configuration file:
-```bash
+
+```yml
 sudo nano /etc/warewulf/warewulf.conf
 ```
 Modify the `network` settings to match your network setup:
 ```yaml
+
 WW_INTERNAL: eth0
 WW_SUBNET: 192.168.1.0
 WW_NETMASK: 255.255.255.0
@@ -88,10 +91,12 @@ Save the file (`CTRL+X`, `Y`, `ENTER`).
 
 ### **2.2 Configure DHCP**
 Edit the DHCP configuration:
-```bash
+
+```yml
 sudo nano /etc/warewulf/dhcpd.conf
 ```
 Example DHCP configuration:
+
 ```yaml
 subnet 192.168.1.0 netmask 255.255.255.0 {
   range 192.168.1.100 192.168.1.200;
@@ -100,18 +105,21 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
 }
 ```
 Restart DHCP service:
-```bash
+
+```yml
 sudo systemctl restart isc-dhcp-server
 ```
 
 ---
 
 ### **2.3 Enable TFTP for PXE Boot**
-```bash
+
+```yml
 sudo wwctl configure tftp
 ```
 Ensure the TFTP service is running:
-```bash
+
+```yml
 sudo systemctl restart tftpd-hpa
 ```
 
@@ -119,12 +127,14 @@ sudo systemctl restart tftpd-hpa
 
 ## **Step 3: Adding Compute Nodes**
 Assign a compute node:
-```bash
+
+```yml
 sudo wwctl node add compute01 -I eth0
 sudo wwctl node set compute01 --ipaddr 192.168.1.101
 ```
 Verify node addition:
-```bash
+
+```yml
 wwctl node list
 ```
 
@@ -134,17 +144,20 @@ wwctl node list
 Warewulf uses **containerized images** for compute nodes.
 
 ### **4.1 Import a Base OS Image**
-```bash
+
+```yml
 sudo wwctl container import docker://warewulf/rocky:8 compute-image
 ```
 
 ### **4.2 Build the Container Image**
-```bash
+
+```yml
 sudo wwctl container build compute-image
 ```
 
 ### **4.3 Assign the Image to Compute Nodes**
-```bash
+
+```yml
 sudo wwctl provision set compute01 --container compute-image
 ```
 
@@ -157,13 +170,15 @@ sudo wwctl provision set compute01 --container compute-image
 
 ### **5.2 Power On the Compute Node**
 Start the node and check logs on the master:
-```bash
+
+```yml
 sudo journalctl -u warewulfd -f
 ```
 
 ### **5.3 Verify Compute Node Boot**
 Check if the node has connected:
-```bash
+
+```yml
 wwctl node list
 ```
 
@@ -172,14 +187,16 @@ wwctl node list
 ## **6. Managing Compute Nodes**
 ### **6.1 Power Management**
 To power off or reboot nodes:
-```bash
+
+```yml
 sudo wwctl node poweroff compute01
 sudo wwctl node reboot compute01
 ```
 
 ### **6.2 Updating Node Image**
 After modifying the image:
-```bash
+
+```yml
 sudo wwctl container build compute-image
 sudo wwctl provision set compute01 --container compute-image
 ```
@@ -189,18 +206,21 @@ sudo wwctl provision set compute01 --container compute-image
 ## **7. Additional Configurations**
 ### **7.1 Checking Node Connection**
 Ensure compute nodes are connected:
-```bash
+
+```yml
 ping compute01
 ```
 
 ### **7.2 Troubleshooting Boot Issues**
 Check logs:
-```bash
+
+```yml
 sudo journalctl -u warewulfd --no-pager
 ```
 
 ### **7.3 Running Commands on Compute Nodes**
-```bash
+
+```yml
 wwctl exec compute01 hostname
 ```
 
